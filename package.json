@@ -1,0 +1,16 @@
+{
+  "name": "galen-data-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://himanshu73188@bitbucket.org/himanshu73188/galen-data-backend.git"
+  },
+  "author": "Himanshu Arora",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/himanshu73188/galen-data-backend#readme"
+}
