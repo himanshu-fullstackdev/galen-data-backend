@@ -21,6 +21,9 @@ exports.fetchAllEvents = async function (req, res, next) {
         // fetch all events from the event table w.r.t website id
         const events = await Event.findAll({
           where: { websiteId: website.id },
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
         });
 
         // push data to the eventsData array
@@ -28,8 +31,6 @@ exports.fetchAllEvents = async function (req, res, next) {
           id: website.id,
           website: website.website,
           scrapeUrl: website.scrapeUrl,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
           events: events,
         });
       },
