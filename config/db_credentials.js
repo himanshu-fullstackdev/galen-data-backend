@@ -1,9 +1,8 @@
-const DB = {
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "galen_data",
-  multipleStatements: true,
-};
+const Sequelize = require("sequelize");
 
-module.exports = DB;
+const sequelize = new Sequelize("galen_data", "root", "", {
+  dialect: "mysql",
+  host: "localhost",
+});
+
+module.exports = sequelize;
