@@ -13,6 +13,7 @@ const Website = require("./src/models/v1/website");
 const Event = require("./src/models/v1/event");
 
 // Import API Routes
+const event = require("./routes/v1/event.js");
 
 // Start Express app
 const app = express();
@@ -33,6 +34,7 @@ Event.belongsTo(Website, { constraints: true, onDelete: "CASCADE" });
 Website.hasMany(Event);
 
 // Start the routes
+app.use("/v1/events", event);
 
 // Connect the db & Start the App
 sequelize
