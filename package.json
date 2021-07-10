@@ -12,5 +12,15 @@
   },
   "author": "Himanshu Arora",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/himanshu73188/galen-data-backend#readme"
+  "homepage": "https://bitbucket.org/himanshu73188/galen-data-backend#readme",
+  "dependencies": {
+    "async": "^3.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.11"
+  }
 }
