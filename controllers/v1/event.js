@@ -12,7 +12,7 @@ const Website = require("../../src/models/v1/website");
 const EventModel = require("../../src/models/v1/event");
 
 // import utils
-const scraper = require("../../util/scraper");
+const scraper = require("../../utils/scraper");
 
 // total number of cpus
 const cpuCount = os.cpus().length;
@@ -134,7 +134,7 @@ cron.schedule("0 0 0 * * *", () => {
 // we turn the worker activation into a promise
 const scrapeDataWithWorker = (arr, scrapeId, websiteId) => {
   return new Promise((resolve, reject) => {
-    const worker = new Worker("./util/scraper.js", {
+    const worker = new Worker("./utils/scraper.js", {
       workerData: { arr: arr, scrapeId: scrapeId, websiteId: websiteId },
     });
     worker.on("message", resolve);

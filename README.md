@@ -39,9 +39,11 @@ Run commands in project terminal.
 
 3. Run `npm install`.
 
-4. Run `npm run start-dev` start App with Hot reloading using nodemon
+4. Create a sql database DB & add the configuration details in config/db_credentials.js
 
-5. In postman, Check with `http://localhost:8080/:url`. Default Port:- 8080.
+5. Run `npm run start-dev` start App with Hot reloading using nodemon
+
+6. In postman, Check with `http://localhost:8080/:url`. Default Port:- 8080.
 
 ## Application Structure
 
@@ -52,6 +54,8 @@ Run commands in project terminal.
 * `controllers/` - This folder contains the business logic of our app.
 * `routes/` - This folder contains the route definitions for our API.
 * `src/Model/` - This folder contains the models of mysql sequelize.
+* `src/Data/` - This folder contains the initial data of mysql sequelize.
+* `utils/` - This folder contains helper programs.
 
 ### What is this repository for? ###
 
