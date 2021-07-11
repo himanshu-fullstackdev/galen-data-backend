@@ -38,7 +38,7 @@ app.use("/v1/events", event);
 
 // Connect the db & Start the App
 sequelize
-  .sync()
+  .sync({ force: true })
   .then((result) => {
     // Start the App
     const server = app.listen(process.env.PORT || 8080, () => {

@@ -1,10 +1,13 @@
+// import modules
 const { parentPort, workerData, isMainThread } = require("worker_threads");
 const cheerio = require("cheerio");
+
+// import models
 const EventModel = require("../src/models/v1/event");
 
-function scrapeData(data) {
+// function addScrapeData(data) {
+addScrapeData = function (data) {
   let $ = cheerio.load(data.arr);
-
   if (data.scrapeId === 1) {
     Array.from(data.arr).forEach((element) => {
       EventModel.Event.findOrCreate({
@@ -31,10 +34,22 @@ function scrapeData(data) {
       });
     });
   }
-}
+};
+
+exports.fetchScrapeData = function (data, scrapeId) {
+  let $ = cheerio.load(data.data);
+  let websiteData = [];
+
+  if (scrapeId === 1) {
+    websiteData = $("#cwsearchabletable tbody tr");
+  } else if (scrapeId === 2) {
+    websiteData = $("#events .rhov a");
+  }
+  return websiteData;
+};
 
 // check that the data was called as a worker thread
 if (!isMainThread) {
   // we post a message through the parent port, to emit the "message" event
-  parentPort.postMessage(scrapeData(workerData));
+  parentPort.postMessage(addScrapeData(workerData));
 }

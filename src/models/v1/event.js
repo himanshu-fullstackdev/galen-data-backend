@@ -2,6 +2,9 @@ const Sequelize = require("sequelize");
 
 const sequelize = require("../../../config/db_credentials");
 
+// import models
+const Website = require("../../models/v1/website");
+
 // controllers
 const eventController = require("../../../controllers/v1/event");
 
@@ -25,6 +28,14 @@ const Event = sequelize.define(
     location: {
       type: Sequelize.STRING,
       allowNull: false,
+    },
+    websiteId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      references: {
+        model: Website,
+        key: "id",
+      },
     },
   },
   {

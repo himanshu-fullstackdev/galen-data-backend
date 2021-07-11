@@ -4,13 +4,15 @@
 const async = require("async");
 const cron = require("node-cron");
 const axios = require("axios");
-const cheerio = require("cheerio");
 const { Worker } = require("worker_threads");
 const os = require("os");
 
 // import models
 const Website = require("../../src/models/v1/website");
 const EventModel = require("../../src/models/v1/event");
+
+// import utils
+const scraper = require("../../util/scraper");
 
 // total number of cpus
 const cpuCount = os.cpus().length;
@@ -82,14 +84,8 @@ exports.scrapeWebsites = async function (req, res, next) {
         websites,
         async function (website, index) {
           const res = await axios.get(website.scrapeUrl);
-          let $ = cheerio.load(res.data);
+          let websiteData = scraper.fetchScrapeData(res, website.scrapeId);
 
-          let websiteData;
-          if (website.scrapeId === 1) {
-            websiteData = $("#cwsearchabletable tbody tr");
-          } else if (website.scrapeId === 2) {
-            websiteData = $("#events .rhov a");
-          }
           const segmentsPerWorker = Math.round(websiteData.length / cpuCount);
           const promises = Array(cpuCount)
             .fill()
