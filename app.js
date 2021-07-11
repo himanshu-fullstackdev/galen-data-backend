@@ -10,7 +10,7 @@ const sequelize = require("./config/db_credentials.js");
 
 // Import Models
 const Website = require("./src/models/v1/website");
-const Event = require("./src/models/v1/event");
+const EventModel = require("./src/models/v1/event");
 
 // Import API Routes
 const event = require("./routes/v1/event.js");
@@ -30,8 +30,8 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // MySQL Associations
-Event.belongsTo(Website, { constraints: true, onDelete: "CASCADE" });
-Website.hasMany(Event);
+EventModel.Event.belongsTo(Website, { constraints: true, onDelete: "CASCADE" });
+Website.hasMany(EventModel.Event);
 
 // Start the routes
 app.use("/v1/events", event);

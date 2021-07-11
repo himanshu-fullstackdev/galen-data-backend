@@ -19,7 +19,7 @@ const Event = sequelize.define(
       allowNull: false,
     },
     date: {
-      type: Sequelize.DATE,
+      type: Sequelize.STRING,
       allowNull: false,
     },
     location: {
@@ -33,6 +33,7 @@ const Event = sequelize.define(
         try {
           const events = await Event.findAll();
           if (events.length == 0) {
+            // scrape websites for the first time
             eventController.scrapeWebsites();
           }
         } catch (err) {
@@ -43,4 +44,4 @@ const Event = sequelize.define(
   }
 );
 
-module.exports = Event;
+exports.Event = Event;

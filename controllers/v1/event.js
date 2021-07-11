@@ -3,10 +3,17 @@
 // import modules
 const async = require("async");
 const cron = require("node-cron");
+const axios = require("axios");
+const cheerio = require("cheerio");
+const { Worker } = require("worker_threads");
+const os = require("os");
 
 // import models
 const Website = require("../../src/models/v1/website");
-const Event = require("../../src/models/v1/event");
+const EventModel = require("../../src/models/v1/event");
+
+// total number of cpus
+const cpuCount = os.cpus().length;
 
 exports.fetchAllEvents = async function (req, res, next) {
   const eventsData = [];
@@ -21,7 +28,8 @@ exports.fetchAllEvents = async function (req, res, next) {
         websites,
         async function (website, index) {
           // fetch all events from the event table w.r.t website id
-          const events = await Event.findAll({
+          console.log(Event);
+          const events = await EventModel.Event.findAll({
             where: { websiteId: website.id },
             attributes: {
               exclude: ["createdAt", "updatedAt"],
@@ -63,9 +71,78 @@ exports.fetchAllEvents = async function (req, res, next) {
   }
 };
 
-exports.scrapeWebsites = async function (req, res, next) {};
+exports.scrapeWebsites = async function (req, res, next) {
+  try {
+    // fetch all websites from the website table
+    const websites = await Website.findAll();
+
+    // loop through the fetched websites array
+    if (websites.length > 0) {
+      async.forEachOf(
+        websites,
+        async function (website, index) {
+          const res = await axios.get(website.scrapeUrl);
+          let $ = cheerio.load(res.data);
+
+          let websiteData;
+          if (website.scrapeId === 1) {
+            websiteData = $("#cwsearchabletable tbody tr");
+          } else if (website.scrapeId === 2) {
+            websiteData = $("#events .rhov a");
+          }
+          const segmentsPerWorker = Math.round(websiteData.length / cpuCount);
+          const promises = Array(cpuCount)
+            .fill()
+            .map((_, index) => {
+              let arrayToScrape = [];
+              if (index === 0) {
+                // the first segment
+                arrayToScrape = websiteData.slice(0, segmentsPerWorker);
+              } else if (index === cpuCount - 1) {
+                // the last segment
+                arrayToScrape = websiteData.slice(segmentsPerWorker * index);
+              } else {
+                // intermediate segments
+                arrayToScrape = websiteData.slice(
+                  segmentsPerWorker * index,
+                  segmentsPerWorker * (index + 1)
+                );
+              }
+              return scrapeDataWithWorker(
+                arrayToScrape,
+                website.scrapeId,
+                website.id
+              );
+            });
+          const segmentsResults = await Promise.all(promises);
+        },
+        (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            // return success response
+            console.log("scrape data added");
+          }
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 // Run scrapeWebsites after every 24 hours.
 cron.schedule("0 0 0 * * *", () => {
   scrapeWebsites();
 });
+
+// we turn the worker activation into a promise
+const scrapeDataWithWorker = (arr, scrapeId, websiteId) => {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker("./util/scraper.js", {
+      workerData: { arr: arr, scrapeId: scrapeId, websiteId: websiteId },
+    });
+    worker.on("message", resolve);
+    worker.on("error", reject);
+  });
+};

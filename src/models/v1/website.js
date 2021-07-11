@@ -2,6 +2,8 @@ const Sequelize = require("sequelize");
 
 const sequelize = require("../../../config/db_credentials");
 
+const websitesData = require("../../data/websites");
+
 const Website = sequelize.define(
   "website",
   {
@@ -19,6 +21,10 @@ const Website = sequelize.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    scrapeId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
   },
   {
     hooks: {
@@ -26,14 +32,13 @@ const Website = sequelize.define(
         try {
           const websites = await Website.findAll();
           if (websites.length == 0) {
-            Website.create({
-              website: "https://www.computerworld.com",
-              scrapeUrl:
-                "https://www.computerworld.com/article/3313417/tech-event-calendar-2020-upcoming-shows-conferences-and-it-expos.html",
-            });
-            Website.create({
-              website: "https://www.techmeme.com",
-              scrapeUrl: "https://www.techmeme.com/events",
+            // add initial data
+            websitesData.forEach((element) => {
+              Website.create({
+                website: element.website,
+                scrapeUrl: element.scrapeUrl,
+                scrapeId: element.scrapeId,
+              });
             });
           }
         } catch (err) {
