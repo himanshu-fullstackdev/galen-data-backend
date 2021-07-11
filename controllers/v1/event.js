@@ -30,7 +30,6 @@ exports.fetchAllEvents = async function (req, res, next) {
         websites,
         async function (website, index) {
           // fetch all events from the event table w.r.t website id
-          console.log(Event);
           const events = await EventModel.Event.findAll({
             where: { websiteId: website.id },
             attributes: {
