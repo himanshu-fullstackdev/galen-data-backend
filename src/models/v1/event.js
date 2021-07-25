@@ -30,6 +30,7 @@ const Event = sequelize.define(
       allowNull: false,
     },
     websiteId: {
+      field: "website_id",
       type: Sequelize.INTEGER,
       allowNull: false,
       references: {

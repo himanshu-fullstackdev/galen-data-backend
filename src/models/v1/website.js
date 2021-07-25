@@ -18,26 +18,32 @@ const Website = sequelize.define(
       allowNull: false,
     },
     scrapeUrl: {
+      field: "scrape_url",
       type: Sequelize.STRING,
       allowNull: false,
     },
     scrapeId: {
+      field: "scrape_id",
       type: Sequelize.INTEGER,
       allowNull: false,
     },
     mainTag: {
+      field: "main_tag",
       type: Sequelize.STRING,
       allowNull: false,
     },
     titleTag: {
+      field: "title_tag",
       type: Sequelize.STRING,
       allowNull: false,
     },
     dateTag: {
+      field: "date_tag",
       type: Sequelize.STRING,
       allowNull: false,
     },
     locationTag: {
+      field: "location_tag",
       type: Sequelize.STRING,
       allowNull: false,
     },
