@@ -83,7 +83,7 @@ exports.scrapeWebsites = async function (req, res, next) {
         websites,
         async function (website, index) {
           const res = await axios.get(website.scrapeUrl);
-          let websiteData = scraper.fetchScrapeData(res, website.scrapeId);
+          let websiteData = scraper.fetchScrapeData(res, website.mainTag);
 
           const segmentsPerWorker = Math.round(websiteData.length / cpuCount);
           const promises = Array(cpuCount)
@@ -105,8 +105,10 @@ exports.scrapeWebsites = async function (req, res, next) {
               }
               return scrapeDataWithWorker(
                 arrayToScrape,
-                website.scrapeId,
-                website.id
+                website.id,
+                website.titleTag,
+                website.dateTag,
+                website.locationTag
               );
             });
           const segmentsResults = await Promise.all(promises);
@@ -132,10 +134,22 @@ cron.schedule("0 0 0 * * *", () => {
 });
 
 // we turn the worker activation into a promise
-const scrapeDataWithWorker = (arr, scrapeId, websiteId) => {
+const scrapeDataWithWorker = (
+  arr,
+  websiteId,
+  titleTag,
+  dateTag,
+  locationTag
+) => {
   return new Promise((resolve, reject) => {
     const worker = new Worker("./utils/scraper.js", {
-      workerData: { arr: arr, scrapeId: scrapeId, websiteId: websiteId },
+      workerData: {
+        arr: arr,
+        websiteId: websiteId,
+        titleTag: titleTag,
+        dateTag: dateTag,
+        locationTag: locationTag,
+      },
     });
     worker.on("message", resolve);
     worker.on("error", reject);

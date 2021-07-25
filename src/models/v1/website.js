@@ -25,6 +25,22 @@ const Website = sequelize.define(
       type: Sequelize.INTEGER,
       allowNull: false,
     },
+    mainTag: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    titleTag: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    dateTag: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    locationTag: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
   },
   {
     hooks: {
@@ -38,6 +54,10 @@ const Website = sequelize.define(
                 website: element.website,
                 scrapeUrl: element.scrapeUrl,
                 scrapeId: element.scrapeId,
+                mainTag: element.mainTag,
+                titleTag: element.titleTag,
+                dateTag: element.dateTag,
+                locationTag: element.locationTag,
               });
             });
           }

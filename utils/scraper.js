@@ -5,46 +5,32 @@ const cheerio = require("cheerio");
 // import models
 const EventModel = require("../src/models/v1/event");
 
-// function addScrapeData(data) {
 addScrapeData = function (data) {
   let $ = cheerio.load(data.arr);
-  if (data.scrapeId === 1) {
-    Array.from(data.arr).forEach((element) => {
-      EventModel.Event.findOrCreate({
-        where: {
-          title: $(element).find("th:eq(0) a").text().trim(),
-          date:
-            $(element).find("td:eq(1)").text().trim() +
-            "-" +
-            $(element).find("td:eq(2)").text().trim(),
-          location: $(element).find("td:eq(3)").text().trim(),
-          websiteId: data.websiteId,
-        },
-      });
+
+  Array.from(data.arr).forEach((element) => {
+    let dateTagFinal = "";
+    let dateTagArray = data.dateTag.split(", ");
+    dateTagArray.forEach((tag, index) => {
+      let hyphen =
+        dateTagArray.length > 1 && index < dateTagArray.length - 1 ? "-" : "";
+      dateTagFinal += $(element).find(tag).text().trim() + hyphen;
     });
-  } else if (data.scrapeId === 2) {
-    Array.from(data.arr).forEach((element) => {
-      EventModel.Event.findOrCreate({
-        where: {
-          title: $(element).find("div:eq(1)").text().trim(),
-          date: $(element).find("div:eq(0)").text().trim(),
-          location: $(element).find("div:eq(2)").text().trim(),
-          websiteId: data.websiteId,
-        },
-      });
+    EventModel.Event.findOrCreate({
+      where: {
+        title: $(element).find(data.titleTag).text().trim(),
+        date: dateTagFinal,
+        location: $(element).find(data.locationTag).text().trim(),
+        websiteId: data.websiteId,
+      },
     });
-  }
+  });
 };
 
-exports.fetchScrapeData = function (data, scrapeId) {
+exports.fetchScrapeData = function (data, mainTag) {
   let $ = cheerio.load(data.data);
   let websiteData = [];
-
-  if (scrapeId === 1) {
-    websiteData = $("#cwsearchabletable tbody tr");
-  } else if (scrapeId === 2) {
-    websiteData = $("#events .rhov a");
-  }
+  websiteData = $(mainTag);
   return websiteData;
 };
 
